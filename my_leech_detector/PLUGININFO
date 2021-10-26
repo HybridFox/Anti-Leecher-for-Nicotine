@@ -1,0 +1,5 @@
+Version="2021-10-24"
+Authors=['TerranGhost and the Nicotine+ Team']
+Name="My Leech Detector"
+Description="Detects when leechers are downloading, and ban the fuck out of them"
+Prefix="MLD"
