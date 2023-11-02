@@ -31,7 +31,7 @@ class Plugin(BasePlugin):
             'message': 'Please consider sharing more files before downloading from me. Thanks :)',
             'num_files': 1,
             'num_folders': 1,
-            'open_private_chat': True
+            'open_private_chat': False
         }
         self.metasettings = {
             'message': {
@@ -103,7 +103,6 @@ class Plugin(BasePlugin):
             show_ui = True
 			
         self.log('User %s is bad, sharing %s files and %s folders', (user, stats['files'], stats['dirs']))
-        for line in self.settings['message'].splitlines():
-            self.send_private(user, line, show_ui=show_ui, switch_page=False)
         self.core.network_filter.ban_user(user)
-        self.log("User %s doesn't share enough files, sent complaint and banned", user)
+        self.core.network_filter.ignore_user(user)
+        self.log("User %s doesn't share enough files and banned", user)
