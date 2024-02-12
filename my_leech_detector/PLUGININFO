@@ -1,5 +1,5 @@
-Version="2021-10-24"
-Authors=['TerranGhost and the Nicotine+ Team']
+Version="2024-12-02"
+Authors=['Original Developer - Nicotine+ Team, Forked from - TerranGhost, amended by - BlavkEntropy1 ']
 Name="My Leech Detector"
-Description="Detects when leechers are downloading, and ban the fuck out of them"
+Description="Detects when leechers are downloading, and ban and ignore them"
 Prefix="MLD"
