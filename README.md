@@ -1,6 +1,7 @@
-# Nicotine--Block-Leechers
+# Anti-Leecher for Nicotine
+
 An modified plugin that bans, ignores leechers without sending them a message.
-This also Unabns and Unignore users who are now sharing. 
+This also Un-bans and Un-ignore users who are now sharing. This does require the banned user to re-log into Soulseek.  
 
 Working with Nicotine+ V3.3.0
 
