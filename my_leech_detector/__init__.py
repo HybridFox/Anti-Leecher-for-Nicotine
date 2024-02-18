@@ -100,6 +100,8 @@ class Plugin(BasePlugin):
 
             if is_user_accepted:
                 self.log("User %s is okay, sharing %s files in %s folders.", (user, num_files, num_folders))
+                self.core.network_filter.unban_user(user)
+                self.core.network_filter.unignore_user(user)
             else:
                 self.log("Buddy %s is sharing %s files in %s folders. Not complaining.",
                          (user, num_files, num_folders))
@@ -127,7 +129,7 @@ class Plugin(BasePlugin):
                     self.core.network_filter.ban_user(user)
                     self.core.network_filter.ignore_user(user)
                     self.log("User %s doesn't share enough files and banned", user)
-                    log_message = ("Leecher detected, %s is only sharing %s files in %s folders. Banned ")
+                    log_message = ("Leecher detected, %s is only sharing %s files in %s folders. Banned and Ignored")
 
         self.probed_users[user] = "pending_leecher"
         self.log(log_message, (user, num_files, num_folders))
