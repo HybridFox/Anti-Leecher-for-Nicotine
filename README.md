@@ -1,2 +1,2 @@
 Re-write at 
-https://github.com/Blavkentropy1/Fu-SSLeechers
+https://github.com/Blavkentropy1/Ban-SoulseekLeechers
