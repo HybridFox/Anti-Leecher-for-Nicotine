@@ -19,7 +19,6 @@
 
 from pynicotine.pluginsystem import BasePlugin
 
-
 class Plugin(BasePlugin):
 
     PLACEHOLDERS = {
@@ -38,6 +37,7 @@ class Plugin(BasePlugin):
             "send_message_to_leechers": True,
             "ban_leechers": True,
             "ignore_leechers": True,
+            "ban_block_ip": True,
             "detected_leechers": []
         }
 
@@ -69,6 +69,10 @@ class Plugin(BasePlugin):
             },
             "ignore_leechers": {
                 "description": "Ignore users who don't meet sharing requirements",
+                "type": "bool"
+            },
+            "ban_block_ip": {
+                "description": "Block the IP of users who don't meet sharing requirements (if known)",
                 "type": "bool"
             }
         }
@@ -107,8 +111,23 @@ class Plugin(BasePlugin):
             except Exception as e:
                 self.log("Failed to send private message to %s: %s", (user, e))
 
+    def block_ip(self, user):
+        """Attempt to block IP if known."""
+        if hasattr(self.core, "users") and hasattr(self.core.users, "watched"):
+            stats = self.core.users.watched.get(user)
+            if stats and getattr(stats, "ip_address", None):
+                ip = stats.ip_address
+                ip_list = getattr(self.core.config.sections.get("server", {}), "ipblocklist", {})
+                if ip not in ip_list:
+                    ip_list[ip] = user
+                    self.log("Blocked IP: %s", ip)
+            else:
+                self.log("No stats found for user %s, cannot block IP.", user)
+        else:
+            self.log("IP block not possible: core.users structure missing.")
+
     def check_user(self, user, num_files, num_folders):
-        # Normalize None → 0 to avoid TypeErrors
+        # Normalize None → 0
         num_files = num_files or 0
         num_folders = num_folders or 0
 
@@ -147,19 +166,29 @@ class Plugin(BasePlugin):
             self.core.userbrowse.request_user_shares(user)
             return
 
-        # Ban / ignore and send message immediately if enabled
+        # Ban / ignore / block IP / message
+        actions = []
         if self.settings.get("ban_leechers"):
             self.core.network_filter.ban_user(user)
+            actions.append("banned")
         if self.settings.get("ignore_leechers"):
             self.core.network_filter.ignore_user(user)
+            actions.append("ignored")
+        if self.settings.get("ban_block_ip"):
+            self.block_ip(user)
+            actions.append("IP blocked (if known)")
         if self.settings.get("send_message_to_leechers"):
             self.send_pm(user)
+            actions.append("messaged")
 
         self.probed_users[user] = "pending_leecher"
         if user not in self.settings["detected_leechers"]:
             self.settings["detected_leechers"].append(user)
-        self.log("Leecher detected: %s is only sharing %s files in %s folders. Banned, ignored, and messaged.",
-                 (user, num_files, num_folders))
+
+        self.log(
+            "Leecher detected: %s is only sharing %s files in %s folders. %s.",
+            (user, num_files, num_folders, ", ".join(actions))
+        )
 
     def upload_queued_notification(self, user, virtual_path, real_path):
         if user in self.probed_users:
