@@ -1,5 +1,0 @@
-Version="2025-09-06"
-Authors=['Original Developer - Nicotine+ Team, Forked from - TerranGhost, amended by - BlavkEntropy1 ']
-Name="Anti-Leecher for Nicotine"
-Description="Detects when leechers are downloading, and ban and ignore them."
-Prefix="MLD"
