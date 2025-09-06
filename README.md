@@ -18,7 +18,6 @@ It does exactly what it says:
 
 Because this is **Soulseek, not Soul-take**.  
 If you want to sit there and be a leecher, go use Spotify or rip YouTube.  
-This is for *sharing music*, not freeloading.  
 I’d rather give to users who share — and only those users.  
 
 ---
