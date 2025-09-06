@@ -1,3 +1,7 @@
+i Sent the wrone one....
+
+THis
+
 # COPYRIGHT (C) 2020-2024 Nicotine+ Contributors
 # COPYRIGHT (C) 2011 quinox <quinox@users.sf.net>
 #
@@ -24,21 +28,21 @@ class Plugin(BasePlugin):
 
     PLACEHOLDERS = {
         "%files%": "num_files",
-        "%folders%": "num_folders"
+        "%folders%": "num_folders",
     }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.settings = {
-            "message": "Please consider sharing more files if you would like to download from me again. Thanks :)",
+            "message": "Please consider not being a leecher. Thanks",
             "open_private_chat": True,
-            "num_files": 1,
-            "num_folders": 1,
+            "num_files": 400,          # default minimum files
+            "num_folders": 20,         # default minimum folders
             "send_message_to_leechers": True,
-            "ban_leechers": True,
-            "ignore_leechers": True,
-            "detected_leechers": []
+            "ban_leechers": True,      # new toggle, default on
+            "ignore_leechers": True,   # new toggle, default on
+            "detected_leechers": []    # kept internally, hidden in UI
         }
 
         self.metasettings = {
@@ -71,6 +75,7 @@ class Plugin(BasePlugin):
                 "description": "Ignore users who don't meet sharing requirements",
                 "type": "bool"
             }
+            # detected_leechers removed → hidden from settings UI
         }
 
         self.probed_users = {}
@@ -81,58 +86,47 @@ class Plugin(BasePlugin):
 
         if self.settings["num_files"] < min_num_files:
             self.settings["num_files"] = min_num_files
+
         if self.settings["num_folders"] < min_num_folders:
             self.settings["num_folders"] = min_num_folders
 
         self.log(
-            "Require users have a minimum of %d files in %d shared public folders.",
+            "Require users to have a minimum of %d files and %d folders shared.",
             (self.settings["num_files"], self.settings["num_folders"])
         )
 
-def send_pm(self, user):
-    """Send private message to a user with placeholders replaced."""
-    if not self.settings.get("send_message_to_leechers") or not self.settings.get("message"):
-        return
-
-    for line in self.settings["message"].splitlines():
-        for placeholder, option_key in self.PLACEHOLDERS.items():
-            line = line.replace(placeholder, str(self.settings.get(option_key, 0)))
-
-        try:
-            self.send_private(
-                user,
-                line,
-                show_ui=self.settings.get("open_private_chat", True),
-                switch_page=False
-            )
-        except Exception as e:
-            self.log("Failed to send private message to %s: %s", (user, e))
-
-
     def check_user(self, user, num_files, num_folders):
+        # Normalize None → 0 to avoid TypeErrors
         num_files = num_files or 0
         num_folders = num_folders or 0
 
         if user not in self.probed_users:
             return
+
         if self.probed_users[user] == "okay":
             return
 
-        is_user_accepted = (num_files >= self.settings["num_files"] and
-                            num_folders >= self.settings["num_folders"])
+        is_user_accepted = (
+            num_files >= self.settings["num_files"] and
+            num_folders >= self.settings["num_folders"]
+        )
 
         if is_user_accepted or user in self.core.buddies.users:
             if user in self.settings["detected_leechers"]:
                 self.settings["detected_leechers"].remove(user)
+
             self.probed_users[user] = "okay"
+
             if is_user_accepted:
-                self.log("User %s is okay, sharing %s files in %s folders.", (user, num_files, num_folders))
-                if self.settings.get("ban_leechers"):
+                self.log("User %s is okay, sharing %s files in %s folders.",
+                         (user, num_files, num_folders))
+                if self.settings["ban_leechers"]:
                     self.core.network_filter.unban_user(user)
-                if self.settings.get("ignore_leechers"):
+                if self.settings["ignore_leechers"]:
                     self.core.network_filter.unignore_user(user)
             else:
-                self.log("Buddy %s is sharing %s files in %s folders. Not complaining.", (user, num_files, num_folders))
+                self.log("Buddy %s is sharing %s files in %s folders. Not complaining.",
+                         (user, num_files, num_folders))
             return
 
         if not self.probed_users[user].startswith("requesting"):
@@ -148,19 +142,15 @@ def send_pm(self, user):
             self.core.userbrowse.request_user_shares(user)
             return
 
-        # Ban / ignore and send message immediately
-        if self.settings.get("ban_leechers"):
-            self.core.network_filter.ban_user(user)
-        if self.settings.get("ignore_leechers"):
-            self.core.network_filter.ignore_user(user)
-
-        self.send_pm(user)
+        if self.settings["message"]:
+            if self.settings["ban_leechers"]:
+                self.core.network_filter.ban_user(user)
+            if self.settings["ignore_leechers"]:
+                self.core.network_filter.ignore_user(user)
+            log_message = ("Leecher detected, %s is only sharing %s files in %s folders. Banned and Ignored")
+            self.log(log_message, (user, num_files, num_folders))
 
         self.probed_users[user] = "pending_leecher"
-        if user not in self.settings["detected_leechers"]:
-            self.settings["detected_leechers"].append(user)
-        self.log("Leecher detected: %s is only sharing %s files in %s folders. Banned, ignored, and messaged.",
-                 (user, num_files, num_folders))
 
     def upload_queued_notification(self, user, virtual_path, real_path):
         if user in self.probed_users:
@@ -168,6 +158,7 @@ def send_pm(self, user):
 
         self.probed_users[user] = "requesting_stats"
         stats = self.core.users.watched.get(user)
+
         if stats is None:
             return
 
@@ -183,7 +174,8 @@ def send_pm(self, user):
     def upload_finished_notification(self, user, *_):
         if user not in self.probed_users:
             return
+
         if self.probed_users[user] != "pending_leecher":
             return
 
-        self.probed_users[user] = "processed_leecher"
+        self.probed_users[user] =_
