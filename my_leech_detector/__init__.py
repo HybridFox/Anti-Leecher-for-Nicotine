@@ -1,7 +1,3 @@
-i Sent the wrone one....
-
-THis
-
 # COPYRIGHT (C) 2020-2024 Nicotine+ Contributors
 # COPYRIGHT (C) 2011 quinox <quinox@users.sf.net>
 #
