@@ -1,9 +1,0 @@
-Version = "2024-12-02"
-Authors = [
-    "Original Developer – Nicotine+ Team",
-    "Forked from – TerranGhost",
-    "amended by – BlavkEntropy1"
-]
-Name = "Anti-Leecher for Nicotine"
-Description = "Sniffs out freeloaders and boots them off your digital lawn. Bans and ignores users who think sharing is optional."
-Prefix = "MLD"
