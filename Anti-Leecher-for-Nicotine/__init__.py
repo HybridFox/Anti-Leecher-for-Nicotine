@@ -31,13 +31,13 @@ class Plugin(BasePlugin):
 
         self.settings = {
             "message": "Please consider not being a leecher. Thanks",
-            "open_private_chat": True,
+            "open_private_chat": False,
             "num_files": 400,          # default minimum files
             "num_folders": 20,         # default minimum folders
-            "send_message_to_leechers": True,
+            "send_message_to_leechers": False,
             "ban_leechers": True,
             "ignore_leechers": True,
-            "ban_block_ip": True,
+            "ban_block_ip": False,
             "detected_leechers": []
         }
 
