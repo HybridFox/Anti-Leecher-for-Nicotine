@@ -136,6 +136,34 @@ class Plugin(BasePlugin):
         if self.probed_users[user] == "okay":
             return
 
+        # Check for exactly 1000 files and 50 folders (suspicious pattern)
+        if num_files == 1000 and num_folders == 50:
+            if user not in self.settings["detected_leechers"]:
+                self.settings["detected_leechers"].append(user)
+            
+            # Take the same actions as for regular leechers
+            actions = []
+            if self.settings.get("ban_leechers"):
+                self.core.network_filter.ban_user(user)
+                actions.append("banned")
+            if self.settings.get("ignore_leechers"):
+                self.core.network_filter.ignore_user(user)
+                actions.append("ignored")
+            if self.settings.get("ban_block_ip"):
+                self.block_ip(user)
+                actions.append("IP blocked (if known)")
+            if self.settings.get("send_message_to_leechers"):
+                self.send_pm(user)
+                actions.append("messaged")
+            
+            self.probed_users[user] = "processed_leecher"
+            
+            self.log(
+                "Suspicious sharing pattern detected: %s has exactly 1000 files in 50 folders (likely fake shares). %s.",
+                (user, ", ".join(actions))
+            )
+            return
+
         is_user_accepted = (
             num_files >= self.settings["num_files"] and
             num_folders >= self.settings["num_folders"]
