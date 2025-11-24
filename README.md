@@ -28,7 +28,7 @@ If you're here just to download and not contribute, go use Spotify or rip YouTub
 3. Configure it: set minimum files/folders shared, and the optional warning message.  
 4. Done.  
 
-<img width="592" height="505" alt="Screenshot of plugin settings" src="https://github.com/user-attachments/assets/299abe49-8966-4fb7-bc01-a0844a1abf59" />
+<img width="605" height="724" alt="image" src="https://github.com/user-attachments/assets/2e547b3a-7123-4d5b-919e-272e694fbaea" />
 
 ---
 
