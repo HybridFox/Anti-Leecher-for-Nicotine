@@ -1,8 +1,5 @@
 Version = "2025-11-24"
-Authors = [
-    "Original Developer – Nicotine+ Team",
-    "Leechers Proudly blocked by – BlavkEntropy1"
-]
+Authors = ['BlavkEntropy1']
 Name = "Anti-Leecher for Nicotine"
 Description = "Say goodbye to the Scummy Leechers... Now with Suspcious Detector"
 Prefix = "MLD"
