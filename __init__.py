@@ -32,8 +32,8 @@ class Plugin(BasePlugin):
         self.settings = {
             "message": "Please consider not being a leecher. Thanks",
             "open_private_chat": False,
-            "num_files": 400,          # default minimum files
-            "num_folders": 20,         # default minimum folders
+            "num_files": 1010,          # default minimum files
+            "num_folders": 51,         # default minimum folders
             "send_message_to_leechers": False,
             "ban_leechers": True,
             "ignore_leechers": True,
@@ -41,8 +41,8 @@ class Plugin(BasePlugin):
             "enable_sus_detector": True,
             "sus_pattern_500_25": False,
             "sus_pattern_1000_50": True,  # Default enabled patterns
-            "sus_pattern_2000_100": False,
             "sus_pattern_1500_75": False,
+            "sus_pattern_2000_100": False,
             "detected_leechers": []
         }
 
@@ -91,13 +91,13 @@ class Plugin(BasePlugin):
                 "type": "bool",
                 "default": True
             },
-            "sus_pattern_2000_100": {
-                "description": "Enable detection of 2000 files and 100 folders pattern",
+            "sus_pattern_1500_75": {
+                "description": "Enable detection of 1500 files and 75 folders pattern",
                 "type": "bool",
                 "default": False
             },
-            "sus_pattern_1500_75": {
-                "description": "Enable detection of 1500 files and 75 folders pattern",
+            "sus_pattern_2000_100": {
+                "description": "Enable detection of 2000 files and 100 folders pattern",
                 "type": "bool",
                 "default": False
             },
