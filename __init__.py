@@ -5,8 +5,7 @@
 #    Version 3, 29 June 2007
 #
 # This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License, published by
-# the Free Software Foundation, either version 3 of the License, or
+# it under the terms of the GNU General Public License, published by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
 # This program is distributed in the hope that it will be useful,
@@ -38,6 +37,7 @@ class Plugin(BasePlugin):
             "ban_leechers": True,
             "ignore_leechers": True,
             "ban_block_ip": False,
+            "enable_sus_detector": True,
             "detected_leechers": []
         }
 
@@ -69,6 +69,10 @@ class Plugin(BasePlugin):
             },
             "ignore_leechers": {
                 "description": "Ignore users who don't meet sharing requirements",
+                "type": "bool"
+            },
+            "enable_sus_detector": {
+                "description": "Enable detection of suspicious users with fake-share patterns (1000 files / 50 folders)",
                 "type": "bool"
             },
             "ban_block_ip": {
@@ -136,12 +140,11 @@ class Plugin(BasePlugin):
         if self.probed_users[user] == "okay":
             return
 
-        # Check for exactly 1000 files and 50 folders (suspicious pattern)
-        if num_files == 1000 and num_folders == 50:
+        # Suspicious fake-share pattern (only if enabled)
+        if self.settings.get("enable_sus_detector") and num_files == 1000 and num_folders == 50:
             if user not in self.settings["detected_leechers"]:
                 self.settings["detected_leechers"].append(user)
-            
-            # Take the same actions as for regular leechers
+
             actions = []
             if self.settings.get("ban_leechers"):
                 self.core.network_filter.ban_user(user)
@@ -155,9 +158,9 @@ class Plugin(BasePlugin):
             if self.settings.get("send_message_to_leechers"):
                 self.send_pm(user)
                 actions.append("messaged")
-            
+
             self.probed_users[user] = "processed_leecher"
-            
+
             self.log(
                 "Suspicious sharing pattern detected: %s has exactly 1000 files in 50 folders (likely fake shares). %s.",
                 (user, ", ".join(actions))
