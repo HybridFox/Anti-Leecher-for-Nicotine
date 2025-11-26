@@ -101,6 +101,10 @@ class Plugin(BasePlugin):
                 "type": "bool",
                 "default": False
             },
+            "ban_sus_leechers": {
+                "description": "Ban users who got caught in the sus detector",
+                "type": "bool"
+            },
             "ban_block_ip": {
                 "description": "Block the IP of users who don't meet sharing requirements (if known)",
                 "type": "bool"
@@ -187,18 +191,18 @@ class Plugin(BasePlugin):
                         self.settings["detected_leechers"].append(user)
 
                     actions = []
-                    if self.settings.get("ban_leechers"):
+                    if self.settings.get("ban_sus_leechers"):
                         self.core.network_filter.ban_user(user)
-                        actions.append("banned")
+                        actions.append("Banned sus")
                     if self.settings.get("ignore_leechers"):
                         self.core.network_filter.ignore_user(user)
-                        actions.append("ignored")
+                        actions.append("Ignored")
                     if self.settings.get("ban_block_ip"):
                         self.block_ip(user)
                         actions.append("IP blocked (if known)")
                     if self.settings.get("send_message_to_leechers"):
                         self.send_pm(user)
-                        actions.append("messaged")
+                        actions.append("Messaged")
 
                     self.probed_users[user] = "processed_leecher"
 
