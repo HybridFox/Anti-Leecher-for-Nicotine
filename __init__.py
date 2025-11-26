@@ -36,6 +36,7 @@ class Plugin(BasePlugin):
             "num_folders": 51,         # default minimum folders
             "send_message_to_leechers": False,
             "ban_leechers": True,
+            "ban_sus_leechers": True,
             "ignore_leechers": True,
             "ban_block_ip": False,
             "enable_sus_detector": True,
